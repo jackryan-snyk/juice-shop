@@ -9,6 +9,7 @@ const models = require('../models/index')
 const insecurity = require('../lib/insecurity')
 const logger = require('../lib/logger')
 const fileType = require('file-type')
+const path = require('path')
 
 module.exports = function fileUpload () {
   return (req, res, next) => {
@@ -18,7 +19,10 @@ module.exports = function fileUpload () {
     if (uploadedFileType !== null && utils.startsWith(uploadedFileType.mime, 'image')) {
       const loggedInUser = insecurity.authenticatedUsers.get(req.cookies.token)
       if (loggedInUser) {
-        fs.open(`frontend/dist/frontend/assets/public/images/uploads/${loggedInUser.data.id}.${uploadedFileType.ext}`, 'w', function (err, fd) {
+        const sanitizedUserId = loggedInUser.data.id.toString().replace(/[^a-zA-Z0-9]/g, '')
+        const sanitizedExt = uploadedFileType.ext.replace(/[^a-zA-Z0-9]/g, '')
+        const filePath = path.join('frontend/dist/frontend/assets/public/images/uploads/', `${sanitizedUserId}.${sanitizedExt}`)
+        fs.open(filePath, 'w', function (err, fd) {
           if (err) logger.warn('Error opening file: ' + err.message)
           fs.write(fd, buffer, 0, buffer.length, null, function (err) {
             if (err) logger.warn('Error writing file: ' + err.message)
@@ -26,7 +30,7 @@ module.exports = function fileUpload () {
           })
         })
         models.User.findByPk(loggedInUser.data.id).then(user => {
-          return user.update({ profileImage: `assets/public/images/uploads/${loggedInUser.data.id}.${uploadedFileType.ext}` })
+          return user.update({ profileImage: `assets/public/images/uploads/${sanitizedUserId}.${sanitizedExt}` })
         }).catch(error => {
           next(error)
         })

@@ -9,11 +9,12 @@ module.exports = function serveQuarantineFiles () {
   return ({ params, query }, res, next) => {
     const file = params.file
 
-    if (!file.includes('/')) {
-      res.sendFile(path.resolve(__dirname, '../ftp/quarantine/', file))
-    } else {
+    if (!file || file.includes('/') || file.includes('..') || file.includes('\\')) {
       res.status(403)
-      next(new Error('File names cannot contain forward slashes!'))
+      next(new Error('Invalid file name!'))
+      return
     }
+    
+    res.sendFile(path.resolve(__dirname, '../ftp/quarantine/', file))
   }
 }
