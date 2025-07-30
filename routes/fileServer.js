@@ -12,12 +12,13 @@ module.exports = function servePublicFiles () {
   return ({ params, query }, res, next) => {
     const file = params.file
 
-    if (!file.includes('/')) {
-      verify(file, res, next)
-    } else {
+    if (!file || file.includes('/') || file.includes('..') || file.includes('\\')) {
       res.status(403)
-      next(new Error('File names cannot contain forward slashes!'))
+      next(new Error('Invalid file name!'))
+      return
     }
+    
+    verify(file, res, next)
   }
 
   function verify (file, res, next) {
