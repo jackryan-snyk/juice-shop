@@ -11,6 +11,12 @@ const insecurity = require('../lib/insecurity')
 module.exports = function productReviews () {
   return (req, res, next) => {
     const id = req.body.id
+    
+    if (!id || typeof id !== 'string' || !/^[a-fA-F0-9]{24}$/.test(id)) {
+      res.status(400).json({ error: 'Invalid review ID' })
+      return
+    }
+    
     const user = insecurity.authenticatedUsers.from(req)
     db.reviews.findOne({ _id: id }).then(review => {
       var likedBy = review.likedBy

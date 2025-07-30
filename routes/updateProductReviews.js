@@ -10,10 +10,23 @@ const insecurity = require('../lib/insecurity')
 
 module.exports = function productReviews () {
   return (req, res, next) => {
+    const id = req.body.id
+    const message = req.body.message
+    
+    if (!id || typeof id !== 'string' || !/^[a-fA-F0-9]{24}$/.test(id)) {
+      res.status(400).json({ error: 'Invalid review ID' })
+      return
+    }
+    
+    if (!message || typeof message !== 'string') {
+      res.status(400).json({ error: 'Invalid message' })
+      return
+    }
+    
     const user = insecurity.authenticatedUsers.from(req)
     db.reviews.update(
-      { _id: req.body.id },
-      { $set: { message: req.body.message } },
+      { _id: id },
+      { $set: { message: message } },
       { multi: true }
     ).then(
       result => {
