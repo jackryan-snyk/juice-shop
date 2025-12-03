@@ -1,14 +1,14 @@
-FROM node:12.18.4-buster
+FROM node:16-bullseye
 
 RUN apt-get -y update && apt-get -y install ca-certificates apt-transport-https
 
-RUN echo 'deb     [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian/20211201T215332Z/ buster main \n\
-deb-src [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian/20211201T215332Z/ buster main \n\
-deb     [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20211201T215332Z/ buster/updates main \n\
-deb-src [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20211201T215332Z/ buster/updates main' >> /etc/apt/sources.list
+RUN echo 'deb     [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian/20220401T000000Z/ bullseye main \n\
+deb-src [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian/20220401T000000Z/ bullseye main \n\
+deb     [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20220401T000000Z/ bullseye-security main \n\
+deb-src [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20220401T000000Z/ bullseye-security main' >> /etc/apt/sources.list
 
 RUN apt-get -y update && apt-get -y install \
-    liblog4j2-java=2.11.1-2
+    liblog4j2-java
 
 ARG BUILD_DATE
 ARG VCS_REF
