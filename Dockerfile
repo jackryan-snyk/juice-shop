@@ -8,7 +8,8 @@ deb     [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/d
 deb-src [trusted=yes check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20211201T215332Z/ buster/updates main' >> /etc/apt/sources.list
 
 RUN apt-get -y update && apt-get -y install \
-    liblog4j2-java=2.11.1-2
+    liblog4j2-java=2.11.1-2 \
+    git>=1:2.20.1-2+deb10u9
 
 ARG BUILD_DATE
 ARG VCS_REF
